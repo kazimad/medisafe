@@ -14,6 +14,7 @@ import com.kazimad.medisafedemo.R
 import com.kazimad.medisafedemo.adapters.MainListAdapter
 import com.kazimad.medisafedemo.interfaces.CustomClickListener
 import com.kazimad.medisafedemo.models.error.ConnectivityError
+import com.kazimad.medisafedemo.models.error.ResponseException
 import com.kazimad.medisafedemo.models.response.Country
 import com.kazimad.medisafedemo.utils.ActivityUtils
 import com.kazimad.medisafedemo.utils.Logger
@@ -52,9 +53,14 @@ class MainFragment : Fragment() {
     }
 
     private fun handleError(throwable: Throwable) {
-        Logger.log("handleError ${throwable.message}")
         list.visibility = View.INVISIBLE
-        val snackbar = throwable.message?.let {
+        progressBar.visibility = View.INVISIBLE
+        val message: String? = when (throwable) {
+            is ResponseException -> throwable.errorMessage
+            is ConnectivityError -> throwable.errorMessage
+            else -> throwable.message
+        }
+        val snackbar = message?.let {
             Snackbar.make(
                 fragmentViewContainer,
                 it,
@@ -65,8 +71,8 @@ class MainFragment : Fragment() {
     }
 
     private fun fillList(countries: ArrayList<Country>) {
-        Logger.log("fillList ${countries.size}")
         list.visibility = View.VISIBLE
+        progressBar.visibility = View.INVISIBLE
         val mainListAdapter = MainListAdapter(countries)
         list.layoutManager = LinearLayoutManager(list.context, RecyclerView.VERTICAL, false)
         list.adapter = mainListAdapter

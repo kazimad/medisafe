@@ -51,6 +51,7 @@ class DetailCountryFragment : Fragment() {
 
     private fun showCountyDetails(countryDetailed: CountryDetailed) {
         dataContainer.visibility = View.VISIBLE
+        progressBar.visibility = View.INVISIBLE
         Utils.fetchSvg(countryDetailed.flag, flagView)
         nameText.text = countryDetailed.name
         populationText.text = countryDetailed.population.toString()
@@ -61,10 +62,11 @@ class DetailCountryFragment : Fragment() {
 
     private fun handleError(throwable: Throwable) {
         dataContainer.visibility = View.INVISIBLE
-        val message: String? = if (throwable is ResponseException) {
-            throwable.errorMessage
-        } else {
-            throwable.message
+        progressBar.visibility = View.INVISIBLE
+        val message: String? = when (throwable) {
+            is ResponseException -> throwable.errorMessage
+            is ConnectivityError -> throwable.errorMessage
+            else -> throwable.message
         }
         val snackbar = message?.let {
             Snackbar.make(
