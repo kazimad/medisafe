@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MedisafeDemo</string>
+    <string name="item_header_capital">Capital: </string>
+    <string name="item_header_sub_region">Region: </string>
+    <string name="item_header_population">Population: </string>
+
+    <string name="error_no_connection">Connection Error</string>
+    <string name="error_no_data">No data found</string>
+</resources>
